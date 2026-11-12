@@ -212,8 +212,8 @@ const VD=[{nom:'FLORENT',i:'FL',c:'#1B2D5B'},{nom:'SAMUEL',i:'SA',c:'#2D7A4F'},{
 const now=new Date();
 let S={mois:now.getMonth(),annee:now.getFullYear(),v:VD.map(v=>({...v,ventes:[]}))};
 let orders=[];
-const SB_URL='https://mcxkadaorfvphcpcbilc.supabase.co',SB_KEY='sb_publishable_U1elRvWbupuQq_xRlKefRg_NShc0vWK',SB_TABLE='Commande%20VN',SYNC_MS=8000;
-const SB_H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+const SB_URL='https://hafvirtqdccehjqljnlo.supabase.co',SB_KEY='sb_publishable_YrmSWYjCqkpP4gZE3OPQXA_NHGK7anj',SB_TABLE='Commande%20VN',SYNC_MS=8000;
+const SB_H={'apikey':SB_KEY,'Content-Type':'application/json'};
 async function sb(q,opt){const r=await fetch(SB_URL+'/rest/v1/'+SB_TABLE+q,{headers:SB_H,...opt});if(!r.ok)throw new Error(r.status+' '+(await r.text()));return r.status===204?null:r.json();}
 const $=id=>document.getElementById(id);
 const eur=n=>Math.round(n||0).toLocaleString('fr-FR')+' €';
@@ -302,6 +302,7 @@ async function initStore(){
   try{await refresh();}catch(e){setSt('⚠️ Connexion impossible : '+e.message);}
   setInterval(async()=>{if(document.hidden||$('ov').classList.contains('open'))return;try{await refresh();}catch(e){setSt('⚠️ Hors ligne');}},SYNC_MS);
 }
+function render(){rTop();rCards();rCumul();rVentes();}
 oAdd=oEdit=resetAll=renV=function(){};
 render();initStore();
 </script>
