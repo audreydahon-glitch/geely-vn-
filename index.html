@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Geely — Commandes VN (lecture seule)</title>
+<title>Geely — Tableau de bord commandes VN</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -136,13 +136,13 @@ body{font-family:'Inter',sans-serif;background:#F2F2F0;color:#1A1A1A;font-size:1
 .btnd{background:#FDECEA;color:#C0392B}
 @media(max-width:768px){.obj{grid-template-columns:1fr}.oblk{padding:0}.oblk+.oblk{border-left:0;border-top:1px solid #EEEEEA;padding-top:14px;margin-top:14px}.vgrid{grid-template-columns:1fr 1fr}}
 @media(max-width:500px){.vgrid{grid-template-columns:1fr}.ckg{grid-template-columns:repeat(2,1fr)}}
-:root{padding-bottom:env(safe-area-inset-bottom,0px)}.badd,.bmod,.sbtn.reset{display:none!important}.vname{cursor:default}.vname:hover{text-decoration:none;color:inherit}</style>
+:root{padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 </head>
 <body>
 <nav class="nav">
   <div class="nav-logo">G</div>
   <div class="nav-title">Geely — Tableau de bord</div>
-  <div class="nav-tab active">Suivi commandes VN — lecture seule</div>
+  <div class="nav-tab active">Suivi commandes VN</div>
 </nav>
 <div class="page">
   <div class="card sbar">
@@ -151,7 +151,7 @@ body{font-family:'Inter',sans-serif;background:#F2F2F0;color:#1A1A1A;font-size:1
       <button class="arr" onclick="chMois(-1)">‹</button>
       <div class="mois-lbl" id="moisLbl"></div>
       <button class="arr" onclick="chMois(1)">›</button>
-      <button class="sbtn reset" onclick="resetAll()" style="margin-left:8px">🗑 Réinitialiser</button>
+      <button class="sbtn save" onclick="exportCsv()" style="margin-left:8px">⬇ Exporter Excel</button><button class="sbtn" onclick="document.getElementById('rf').click()">📂 Restaurer</button><input type="file" id="rf" accept=".json" style="display:none" onchange="restore(this)"><button class="sbtn reset" onclick="resetAll()" style="margin-left:8px">🗑 Réinitialiser</button>
     </div>
   </div>
   <div class="stitle">Vendeurs — Cliquer le nom pour renommer</div>
@@ -293,17 +293,38 @@ async function delV(){
   try{await wDel(S.v[vi].ventes[idx]._id);cov();}catch(e){alert('Suppression impossible : '+(e.message||e.code||e));}
 }
 function setSt(t){$('sst').textContent=t;}
+function dl(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);}
+const plain=()=>orders.map(({_id,vi,...r})=>r);
+function autoBackup(){try{const t=new Date().toISOString().slice(0,10);if(!orders.length||localStorage.getItem('geely_vn_bk')===t)return;localStorage.setItem('geely_vn_bk',t);dl('Geely_VN_sauvegarde_'+t+'.json',JSON.stringify(plain()),'application/json');setSt('Sauvegarde du jour téléchargée (dossier Téléchargements)');}catch(e){}}
+function exportCsv(){
+  const cols=['vendeur','date','modele','immat','client','type','origine','marge','ca','myana','facture','annule','fi','mad','bulbee','coyote','protech','euro','reprise','mois','annee'];
+  const q=v=>{v=v===true?'Oui':v===false?'':v==null?'':String(v);return '"'+v.replace(/"/g,'""')+'"';};
+  const csv='\uFEFF'+cols.join(';')+'\n'+plain().map(r=>cols.map(c=>q(r[c])).join(';')).join('\n');
+  dl('Geely_VN_commandes_'+new Date().toISOString().slice(0,10)+'.csv',csv,'text/csv;charset=utf-8');
+}
+async function restore(inp){
+  const file=inp.files[0];inp.value='';if(!file)return;
+  try{
+    const rows=JSON.parse(await file.text());if(!Array.isArray(rows))throw new Error('fichier non valide');
+    const have=new Set(plain().map(r=>[r.ts,r.immat,r.vendeur].join('|')));
+    const add=rows.filter(r=>!have.has([r.ts,r.immat,r.vendeur].join('|'))).map(({id,...r})=>r);
+    if(!add.length){alert('Rien à restaurer : toutes les commandes du fichier sont déjà présentes.');return;}
+    if(!confirm('Restaurer '+add.length+' commande(s) manquante(s) ?'))return;
+    await sb('',{method:'POST',headers:{...SB_H,'Prefer':'return=minimal'},body:JSON.stringify(add)});
+    await refresh();alert(add.length+' commande(s) restaurée(s).');
+  }catch(e){alert('Restauration impossible : '+e.message);}
+}
 async function refresh(){
   const rows=await sb('?select=*&order=id');
   orders=rows.map(r=>({...r,_id:r.id,vi:S.v.findIndex(v=>v.nom===r.vendeur)}));rebuild();render();
   setSt('Synchronisé à '+new Date().toLocaleTimeString('fr-FR'));
+  if(!window._bk){window._bk=1;autoBackup();}
 }
 async function initStore(){
   try{await refresh();}catch(e){setSt('⚠️ Connexion impossible : '+e.message);}
   setInterval(async()=>{if(document.hidden||$('ov').classList.contains('open'))return;try{await refresh();}catch(e){setSt('⚠️ Hors ligne');}},SYNC_MS);
 }
 function render(){rTop();rCards();rCumul();rVentes();}
-oAdd=oEdit=resetAll=renV=function(){};
 render();initStore();
 </script>
 </body>
