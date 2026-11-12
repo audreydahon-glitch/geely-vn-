@@ -214,7 +214,7 @@ let S={mois:now.getMonth(),annee:now.getFullYear(),v:VD.map(v=>({...v,ventes:[]}
 let orders=[];
 const SB_URL='https://hafvirtqdccehjqljnlo.supabase.co',SB_KEY='sb_publishable_YrmSWYjCqkpP4gZE3OPQXA_NHGK7anj',SB_TABLE='Commande%20VN',SYNC_MS=8000;
 const SB_H={'apikey':SB_KEY,'Content-Type':'application/json'};
-async function sb(q,opt){const r=await fetch(SB_URL+'/rest/v1/'+SB_TABLE+q,{headers:SB_H,...opt});if(!r.ok)throw new Error(r.status+' '+(await r.text()));return r.status===204?null:r.json();}
+async function sb(q,opt){const r=await fetch(SB_URL+'/rest/v1/'+SB_TABLE+q,{headers:SB_H,...opt});if(!r.ok)throw new Error(r.status+' '+(await r.text()));const t=await r.text();return t?JSON.parse(t):null;}
 const $=id=>document.getElementById(id);
 const eur=n=>Math.round(n||0).toLocaleString('fr-FR')+' €';
 const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
