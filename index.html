@@ -176,7 +176,7 @@ body{font-family:'Inter',sans-serif;background:#F2F2F0;color:#1A1A1A;font-size:1
       <input type="hidden" id="evi"><input type="hidden" id="eidx">
       <div class="f2">
         <div class="fr"><label>Date</label><input type="text" id="fd" placeholder="Lun 2"></div>
-        <div class="fr"><label>Modèle</label><select id="fm"><option value="">— Choisir —</option><option>E2</option><option>E5</option><option>STARRAY</option><option>MONJARO</option></select></div>
+        <div class="fr"><label>Modèle</label><select id="fm"><option>E2</option><option>E5</option><option>STARRAY</option><option>MONJARO</option></select></div>
       </div>
       <div class="f2">
         <div class="fr"><label>Immat / VIN</label><input type="text" id="fi2" placeholder="GN-338-HJ"></div>
@@ -339,7 +339,7 @@ function livCell(vt){if(!vt.date_livraison)return'<span class="sn">—</span>';c
 const livList=vi=>S.v.flatMap((v,i)=>(vi==null||vi===i)?v.ventes.map(x=>({...x,_v:v})):[]).filter(x=>x.date_livraison&&!isAnn(x)&&!x.livre).sort((a,b)=>a.date_livraison.localeCompare(b.date_livraison));
 function nextLiv(i){const l=livList(i);if(!l.length)return'<div class="vliv">📅 Aucune livraison prévue</div>';const x=l[0],s=livState(x);return`<div class="vliv ${s.c}">📅 Prochaine livraison : <b>${fmtD(x.date_livraison)}</b> · ${esc(x.modele)||'—'} · ${s.t}</div>`;}
 function rLiv(){const l=livList().slice(0,16);$('livgrid').innerHTML=l.length?l.map(x=>{const s=livState(x);return`<div class="liv ${s.c}"><div class="lvd">${fmtD(x.date_livraison)}</div><div><b>${esc(x.modele)||'—'}</b> · ${esc(x.client)||'—'}<br><small>${esc(x._v.nom)} · ${s.t}</small></div></div>`;}).join(''):'<div class="emsg" style="padding:14px">Aucune livraison estimée à venir</div>';}
-function setModele(v){const s=$('fm');if(v&&![...s.options].some(o=>o.value===v))s.add(new Option(v,v));s.value=v||'';}
+function setModele(v){const s=$('fm');[...s.options].forEach(o=>{if(o.dataset.x)o.remove();});if(v&&![...s.options].some(o=>o.value===v)){const o=new Option(v,v);o.dataset.x=1;s.add(o);}s.value=v||s.options[0].value;}
 const MODELES=['E2','E5','STARRAY','MONJARO'],MCOL=['#1B2D5B','#2D7A4F','#C0392B','#E67E22','#999'];
 function rMod(){
   const vm=allCde(),cnt={};MODELES.forEach(m=>cnt[m]=0);let autres=0;
