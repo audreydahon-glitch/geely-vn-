@@ -252,11 +252,11 @@ function rCards(){
 }
 function rCumul(){
   const vm=allCde(),g=k=>vm.filter(x=>x[k]).length,gt=k=>vm.filter(x=>(x.type||'VN')===k).length,go=k=>vm.filter(x=>(x.origine||'STOCK')===k).length,ca=vm.filter(x=>x.fi).reduce((s,x)=>s+(x.ca||0),0);
-  const ip=(k,n)=>'IP '+n+' '+(vm.length?Math.round(g(k)/vm.length*100)+' %':'—');
-  const it=[{v:vm.length,l:'COMMANDES'},{v:vm.filter(x=>x.myana==='valide').length,l:'MY ANA OK'},{v:g('mad'),l:'MAD',sub:ip('mad','MAD')},
-    {v:g('fi'),l:'FI',sub:ip('fi','FI')},{v:ca>0?eur(ca):'—',l:'DÉCAISS. FI',sm:1},
-    {v:g('coyote'),l:'COYOTE',sub:ip('coyote','COYOTE')},{v:g('protech'),l:'PROTECH'},{v:g('bulbee'),l:'BULBEE',sub:ip('bulbee','BULBEE')},{v:g('euro'),l:'EURODATACAR',sub:ip('euro','EURODATA')},{v:g('reprise'),l:'REPRISES'},{v:gt('VN'),l:'VN'},{v:gt('VD'),l:'VD'},{v:gt('VK'),l:'VK'},{v:go('STOCK'),l:'STOCK'},{v:go('APPRO'),l:'APPRO'}];
-  $('cgrid').innerHTML=it.map((x,k)=>`<div class="cs c${k}"><div class="csv" style="${x.sm?'font-size:12px':''}">${x.v}</div><div class="csl">${x.l}</div><div class="css">${x.sub||'ce mois'}</div></div>`).join('');
+  const ip=k=>(vm.length?Math.round(g(k)/vm.length*100)+' %':'—');
+  const it=[{v:vm.length,l:'COMMANDES'},{v:vm.filter(x=>x.myana==='valide').length,l:'MY ANA OK'},{v:g('mad'),l:'MAD',sub:ip('mad'),col:'#0891B2'},
+    {v:g('fi'),l:'FI',sub:ip('fi'),col:'#059669'},{v:ca>0?eur(ca):'—',l:'DÉCAISS. FI',sm:1},
+    {v:g('coyote'),l:'COYOTE',sub:ip('coyote'),col:'#D97706'},{v:g('protech'),l:'PROTECH'},{v:g('bulbee'),l:'BULBEE',sub:ip('bulbee'),col:'#0369A1'},{v:g('euro'),l:'EURODATACAR',sub:ip('euro'),col:'#B45309'},{v:g('reprise'),l:'REPRISES'},{v:gt('VN'),l:'VN'},{v:gt('VD'),l:'VD'},{v:gt('VK'),l:'VK'},{v:go('STOCK'),l:'STOCK'},{v:go('APPRO'),l:'APPRO'}];
+  $('cgrid').innerHTML=it.map((x,k)=>`<div class="cs c${k}"><div class="csv" style="${x.sm?'font-size:12px':''}">${x.v}</div><div class="csl">${x.l}</div><div class="css"${x.col?` style="color:${x.col};font-weight:700;font-size:11px"`:''}>${x.sub||'ce mois'}</div></div>`).join('');
 }
 function rVentes(){
   $('vsecs').innerHTML=vOrd().map(vi=>{const v=S.v[vi];
