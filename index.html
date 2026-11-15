@@ -80,8 +80,8 @@ body{font-family:'Inter',sans-serif;background:#F2F2F0;color:#1A1A1A;font-size:1
 .cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(75px,1fr));gap:7px}
 .cs{background:#fff;border:1px solid #E5E5E0;border-radius:9px;padding:10px 6px;text-align:center;position:relative;overflow:hidden}
 .cs::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.cs.c0::before{background:#1B2D5B}.cs.c1::before{background:#7C3AED}.cs.c2::before{background:#0891B2}
-.cs.c3::before{background:#059669}.cs.c4::before{background:#DC2626}.cs.c5::before{background:#D97706}
+.cs.c0::before{background:#1B2D5B}.cs.c1::before{background:#7C3AED}.cs.c2::before{background:#059669}
+.cs.c3::before{background:#DC2626}.cs.c4::before{background:#0891B2}.cs.c5::before{background:#D97706}
 .cs.c6::before{background:#9333EA}.cs.c7::before{background:#0369A1}.cs.c8::before{background:#B45309}.cs.c9::before{background:#374151}.cs.c10::before{background:#065F46}.cs.c11::before{background:#16A34A}.cs.c12::before{background:#DB2777}
 .csv{font-size:18px;font-weight:700}
 .csl{font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#999;margin-top:2px}
@@ -253,8 +253,8 @@ function rCards(){
 function rCumul(){
   const vm=allCde(),g=k=>vm.filter(x=>x[k]).length,gt=k=>vm.filter(x=>(x.type||'VN')===k).length,go=k=>vm.filter(x=>(x.origine||'STOCK')===k).length,ca=vm.filter(x=>x.fi).reduce((s,x)=>s+(x.ca||0),0);
   const ip=k=>(vm.length?Math.round(g(k)/vm.length*100)+' %':'—');
-  const it=[{v:vm.length,l:'COMMANDES'},{v:vm.filter(x=>x.myana==='valide').length,l:'MY ANA OK'},{v:g('mad'),l:'MAD',sub:ip('mad'),col:'#0891B2'},
-    {v:g('fi'),l:'FI',sub:ip('fi'),col:'#059669'},{v:ca>0?eur(ca):'—',l:'DÉCAISS. FI',sm:1},
+  const it=[{v:vm.length,l:'COMMANDES'},{v:vm.filter(x=>x.myana==='valide').length,l:'MY ANA OK'},
+    {v:g('fi'),l:'FI',sub:ip('fi'),col:'#059669'},{v:ca>0?eur(ca):'—',l:'DÉCAISS. FI',sm:1},{v:g('mad'),l:'MAD',sub:ip('mad'),col:'#0891B2'},
     {v:g('coyote'),l:'COYOTE',sub:ip('coyote'),col:'#D97706'},{v:g('protech'),l:'PROTECH'},{v:g('bulbee'),l:'BULBEE',sub:ip('bulbee'),col:'#0369A1'},{v:g('euro'),l:'EURODATACAR',sub:ip('euro'),col:'#B45309'},{v:g('reprise'),l:'REPRISES'},{v:gt('VN'),l:'VN'},{v:gt('VD'),l:'VD'},{v:gt('VK'),l:'VK'},{v:go('STOCK'),l:'STOCK'},{v:go('APPRO'),l:'APPRO'}];
   $('cgrid').innerHTML=it.map((x,k)=>`<div class="cs c${k}"><div class="csv" style="${x.sm?'font-size:12px':''}">${x.v}</div><div class="csl">${x.l}</div><div class="css"${x.col?` style="color:${x.col};font-weight:700;font-size:11px"`:''}>${x.sub||'ce mois'}</div></div>`).join('');
 }
